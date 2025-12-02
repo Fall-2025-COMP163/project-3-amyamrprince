@@ -71,8 +71,8 @@ def create_character(name, character_class):
         raise InvalidCharacterClassError("Invalid class")
     max_health = character_health
     inventory = []
-    active_quest = []
-    completed_quest = []
+    active_quests = []
+    completed_quests = []
 
 
     character_dictionary = {"name": name,
@@ -85,8 +85,8 @@ def create_character(name, character_class):
                        "gold": character_gold,
                        "max_health": max_health,
                        "inventory": inventory,
-                       "active_quest": active_quest,
-                       "completed_quest": completed_quest}
+                       "active_quests": active_quests,
+                       "completed_quests": completed_quests}
     return character_dictionary
 
     
@@ -128,8 +128,8 @@ def save_character(character, save_directory="data/save_games"):
     filepath = os.path.join(save_directory, filename)
 #conver the list into a string
     inventory_str = ",".join(character.get("inventory",[]))
-    active_str = ",".join(character.get("active_quest",[]))
-    completed_str = ",".join(character.get("completed_quest",[]))
+    active_str = ",".join(character.get("active_quests",[]))
+    completed_str = ",".join(character.get("completed_quests",[]))
 
     with open(filepath,"w") as f:
         f.write(f"NAME:{character['name']}\n")
@@ -142,8 +142,8 @@ def save_character(character, save_directory="data/save_games"):
         f.write(f"EXPERIENCE:{character['experience']}\n")
         f.write(f"GOLD:{character['gold']}\n")
         f.write(f"INVENTORY:{inventory_str}\n")
-        f.write(f"ACTIVE_QUEST:{active_str}\n")
-        f.write(f"COMPLETED_QUEST:{completed_str}\n")
+        f.write(f"ACTIVE_QUESTS:{active_str}\n")
+        f.write(f"COMPLETED_QUESTS:{completed_str}\n")
     return True
 
 
@@ -203,16 +203,16 @@ def load_character(character_name, save_directory="data/save_games"):
                 character["inventory"] = []
             else:
                 character["inventory"] = value.split(",")
-        elif key == "ACTIVE_QUEST":
+        elif key == "ACTIVE_QUESTS":
             if value == "":
-                character["active_quest"] = []
+                character["active_quests"] = []
             else:
-                character["active_quest"] = value.split(",")   
-        elif key == "COMPLETED_QUEST":
+                character["active_quests"] = value.split(",")   
+        elif key == "COMPLETED_QUESTS":
             if value == "":
-                character["completed_quest"] = []
+                character["completed_quests"] = []
             else:
-                character["completed_quest"] = value.split(",") 
+                character["completed_quests"] = value.split(",") 
     #print("Debug keys:",character.keys()) 
     validate_character_data(character)
     return character
@@ -394,7 +394,7 @@ def validate_character_data(character):
     
     required_fields = [ "name", "class", "level", "health","max_health", 
                     "strength", "magic", "experience", "gold", "inventory",
-                    "active_quest", "completed_quest"]
+                    "active_quests", "completed_quests"]
     for field in required_fields:
         if field not in character:
             raise InvalidSaveDataError("Charater is missing a field")
@@ -407,7 +407,7 @@ def validate_character_data(character):
     for f in int_fields:
         if not isinstance(character[f], int):
             raise InvalidSaveDataError
-    list_fields = ["inventory","active_quest","completed_quest"] 
+    list_fields = ["inventory","active_quests","completed_quests"] 
     for l in list_fields:
         if not isinstance(character[l], list):
             raise InvalidSaveDataError  
