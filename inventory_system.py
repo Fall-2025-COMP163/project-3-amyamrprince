@@ -198,24 +198,41 @@ def equip_weapon(character, item_id, item_data):
     # Store equipped_weapon in character dictionary
     # Remove item from inventory
     if not has_item(character, item_id):
-        raise ItemNotFoundError
-    info = item_data[item_id]
+        raise ItemNotFoundError(f"Item '{item_id}' not found in inventory.")
+     #Work out whether item_data is a single-item dict or full mapping
+    if isinstance(item_data, dict) and "type" in item_data and "effect" in item_data:
+        info = item_data
+    else:
+        # full item_data mapping
+        if item_id not in item_data:
+            raise ItemNotFoundError(f"Item '{item_id}' is not defined in item_data.")
+        info = item_data[item_id]
+
     if info["type"] != "weapon":
-        raise InvalidItemTypeError
+        raise InvalidItemTypeError(f"Item '{item_id}' is type '{info.get('type')}', not 'weapon'.")
+    #unequips if weapon is already equipped
     current_weapon = character.get("equipped_weapon")
 
     if current_weapon is not None:
-        old_info = item_data[current_weapon]
-        effect_str = old_info["effect"]
-        stat_name, value = parse_item_effect(effect_str)
-        apply_stat_effect(character,stat_name, -value)
+        old_info = None
+        #if there is full item_data mapping , get old weapon info from there
+        if not ("type" in item_data and "effect" in item_data):
+            old_info = item_data.get(current_weapon)
+        if old_info is not None:
+            old_effect = old_info.get("effect", "")
+            if old_effect:
+                old_stat, old_value = parse_item_effect(old_effect)
+                apply_stat_effect(character, old_stat, -old_value)
+                #add old weapon back to inventory
         add_item_to_inventory(character, current_weapon)
+    #apply the weapon's stat bonus
+    effect_str = info.get("effect", "")
+    if effect_str:
+        stat_name, value = parse_item_effect(effect_str)
+        apply_stat_effect(character, stat_name, value)
 
-    effect_str = info["effect"]
-    stat_name, value = parse_item_effect(effect_str)
-    apply_stat_effect(character, stat_name, value)
-    character["equipped_weapon"] = item_id
     remove_item_from_inventory(character, item_id)
+    character["equipped_weapon"] = item_id 
     return (f"Equipped weapon:{item_id}")
 
 def equip_armor(character, item_id, item_data):
