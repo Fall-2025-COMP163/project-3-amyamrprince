@@ -2,7 +2,7 @@
 COMP 163 - Project 3: Quest Chronicles
 Main Game Module - Starter Code
 
-Name: [Your Name Here]
+Name: Amya Ratcliff Prince
 
 AI Usage: [Document any AI assistance used]
 
@@ -112,8 +112,8 @@ def new_game():
         print(f"Gold:{current_character['gold']}")
         print(f"Max Health:{current_character['max_health']}")
         print(f"Inventory:{current_character['inventory']}")
-        print(f"Active quest:{current_character['active_quest']}")
-        print(f"Completed quest:{current_character['completed_quest']}")
+        print(f"Active quests:{current_character['active_quests']}")
+        print(f"Completed quests:{current_character['completed_quests']}")
         #save character
         character_manager.save_character(current_character)
         print("Your Character has been saved!")
@@ -240,9 +240,25 @@ def view_character_stats():
     # Show: name, class, level, health, stats, gold, etc.
     # Use character_manager functions
     # Show quest progress using quest_handler
+    if current_character is None:
+        print("No character loaded.")
+        return
+    print("=== Character Stats ===")
+    print(f"Name: {current_character['name']}")
+    print(f"Class: {current_character['class']}")
+    print(f"Level: {current_character['level']}")
+    print(f"Strength: {current_character['strength']}")
+    print(f"Magic: {current_character['magic']}")
+    print(f"Health: {current_character['health']}")
+    print(f"Experience: {current_character['experience']}")
+    print(f"Gold: {current_character['gold']}")
+    print(f"Max Health: {current_character['max_health']}")
+    print(f"Inventory: {current_character['inventory']}")
+    print(f"Active quests :{current_character['active_quests']}")
+    print(f"Completed quests :{current_character['completed_quests']}")
     pass
 
-def view_inventory():
+def view_inventory():#not finished
     """Display and manage inventory"""
     global current_character, all_items
     
@@ -250,6 +266,13 @@ def view_inventory():
     # Show current inventory
     # Options: Use item, Equip weapon/armor, Drop item
     # Handle exceptions from inventory_system
+    print("=== Inventory ===")
+    if len(current_character["inventory"]) == 0:
+        print("Your inventory is empty.")
+        return
+    for item in current_character["Inventory"]:
+        print("-",item)
+        #Equip weapon/armor, Drop item
     pass
 
 def quest_menu():
@@ -266,7 +289,61 @@ def quest_menu():
     #   6. Complete Quest (for testing)
     #   7. Back
     # Handle exceptions from quest_handler
-    pass
+    if current_character is None:
+        print("Creat or load a character")
+        return
+    
+    while True:
+        print("=== Quest Menu ===")
+        print("1. View Active Quests")
+        print("2. View Available Quests")
+        print("3. View Completed Quests")
+        print("4. Accept Quest")
+        print(" 5. Abandon Quest")
+        print("6. Complete Quest (for testing)")
+        print("7. Back")
+        choice = input("Enter a choice:")
+        if choice == "1":
+            try:
+                quest_handler.get_active_quests(current_character, all_quests)
+                
+            except QuestNotFoundError as e:
+                print(f"Error:{e}")
+        elif choice == "2":
+            try:
+                quest_handler.get_available_quests(current_character, all_quests)
+            
+            except QuestNotFoundError as e:
+                print(f"Error:{e}")
+        elif choice == "3":
+            try:
+                quest_handler.get_completed_quests(current_character, all_quests)
+            except QuestAlreadyCompletedError as e:
+                print(f"Error:{e}")
+        elif choice == "4":
+            quest_id = input("Pick a quest: ")
+            try:
+                quest_handler.accept_quest(current_character, all_quests, quest_id)
+            except QuestAlreadyCompletedError as e:
+                print(f"Error:{e}")
+        elif choice == "5":
+            quest_id = input("What quest to you want to abandon: ")
+            try:
+                quest_handler.abandon_quest(current_character,quest_id)
+            except QuestAlreadyCompletedError as e:
+                print(f"Error:{e}")
+        elif choice == "6":
+            quest_id = input("Which quest is complete: ")
+            try:
+                quest_handler.complete_quest(current_character, quest_id)
+            except QuestNotActiveError as e:
+                print(f"Error : {e}")
+        elif choice == "7":
+            break
+        else:
+            print("Invalid Choice")
+
+
 
 def explore():
     """Find and fight random enemies"""
@@ -277,6 +354,13 @@ def explore():
     # Start combat with combat_system.SimpleBattle
     # Handle combat results (XP, gold, death)
     # Handle exceptions
+    print("\n=== Exploring the world... ===")
+    enemy = None
+    if enemy is None:
+        print("There is no enemies availabe to fight.")
+        return
+    #print(f"You encounter a {enemy}["name"]")
+    #not finished 
     pass
 
 def shop():
@@ -288,6 +372,9 @@ def shop():
     # Show current gold
     # Options: Buy item, Sell item, Back
     # Handle exceptions from inventory_system
+
+    
+
     pass
 
 # ============================================================================
@@ -301,6 +388,12 @@ def save_game():
     # TODO: Implement save
     # Use character_manager.save_character()
     # Handle any file I/O exceptions
+    try:
+        character_manager.save_character(current_character)
+        print("game saved successfully!")
+    except Exception as e:
+        print(f"Error saving game: {e}")
+
     pass
 
 def load_game_data():
@@ -312,7 +405,18 @@ def load_game_data():
     # Try to load items with game_data.load_items()
     # Handle MissingDataFileError, InvalidDataFormatError
     # If files missing, create defaults with game_data.create_default_data_files()
-    pass
+    try:#loads quest and items in game_data
+        all_quests = game_data.load_quests()
+        all_items = game_data.load_items()
+    except (MissingDataFileError, InvalidDataFormatError):
+        print("Data missing. Create defaults.")
+        #creates defult files
+        game_data.create_default_data_files()
+        #try loading again after creating defults
+        all_quests = game_data.load_quests()
+        all_items = game_data.load_items()
+
+    
 
 def handle_character_death():
     """Handle character death"""
@@ -323,7 +427,29 @@ def handle_character_death():
     # Offer: Revive (costs gold) or Quit
     # If revive: use character_manager.revive_character()
     # If quit: set game_running = False
-    pass
+    print("\n=== You have died... ===")
+
+    while True:
+        print("what would you like to do?")
+        print("1. Revive (cost gold)")
+        print("2. Quit to main menu")
+
+        choice = input("Enter a choice: ")
+        if choice == "1":
+            revive_cost = 10
+            if current_character["gold"] >= revive_cost:
+                current_character["gold"] -= revive_cost
+                character_manager.revive_character(current_character)
+                print("You rise again, Revived!")
+                break
+            else:
+                print("Not enough gold to revive.")
+        if choice == 2:
+            game_running = False
+            print("Returning to main menu")
+            break
+        else:
+            ("Invalivd choice. Please enter 1 or 2.")
 
 def display_welcome():
     """Display welcome message"""
