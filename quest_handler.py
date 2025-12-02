@@ -56,6 +56,7 @@ def accept_quest(character, quest_id, quest_data_dict):#use AI to help explain w
     
     quest = quest_data_dict[quest_id]
     # Checks level requirement
+
     required_level = quest.get("required_level", 1)
     if character.get("level", 1) < required_level:
         raise InsufficientLevelError(f"Requires level {required_level}, but character is level {character.get('level', 1)}.")
@@ -207,7 +208,7 @@ def is_quest_completed(character, quest_id):
     Returns: True if completed, False otherwise
     """
     # TODO: Implement completion check
-    return quest_id in character.get("Completed_quests", [])
+    return quest_id in character.get("completed_quests", [])
     
 
 def is_quest_active(character, quest_id):
