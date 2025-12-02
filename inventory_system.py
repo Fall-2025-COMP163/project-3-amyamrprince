@@ -152,15 +152,18 @@ def use_item(character, item_id, item_data):
     #Check if character has the item
     if not has_item(character,item_id):
         raise ItemNotFoundError(f"Item '{item_id}' not found in inventory.")
-    #look up item
-    if item_id not in item_data:
-        raise ItemNotFoundError(f"Item '{item_id}' is not defined in item_data.")
-    info_data = item_data[item_id]
+    
+    if isinstance(item_data, dict) and "type" in item_data and "effect" in item_data:
+        info_data = item_data
+    else:
+        if item_id not in item_data:
+            raise ItemNotFoundError(f"Item '{item_id}' is not defined in item_data.")
+        info_data = item_data[item_id]
 
     if item_data["type"] != "consumable": 
         raise InvalidItemTypeError("Invalid type, Try again")
     
-    effect_str = item_data["effect"]
+    effect_str = info_data.get("effect", "")
     stat_name,value_str = effect_str.split(":")
     value = int(value_str)
     apply_stat_effect(character, stat_name, value) #apply effect
