@@ -372,7 +372,7 @@ def purchase_item(character, item_id, item_data):
     # Subtract gold from character
     # Add item to inventory
 
-    
+
     if isinstance(item_data, dict) and item_id in item_data:
         item_info = item_data[item_id]
     else:#item_data itself is the info
@@ -412,15 +412,23 @@ def sell_item(character, item_id, item_data):
     # Remove item from inventory
     # Add gold to character
     if not has_item(character, item_id):
-        raise ItemNotFoundError
-    item_info = item_data[item_id]
-    cost = item_info["cost"]
+        raise ItemNotFoundError(f"Item '{item_id}' not found in inventory.")
+    # use item_data directly
+    if isinstance(item_data, dict) and item_id in item_data:
+        item_info = item_data[item_id]
+    else:
 
+        item_info = item_data
+
+    cost = item_info.get("cost", 0)
     sell_price = cost // 2
+    # Remove item from inventory
     remove_item_from_inventory(character, item_id)
-    character["gold"] += sell_price
-    return sell_price
 
+    # Add gold to character
+    character["gold"] = character.get("gold", 0) + sell_price
+
+    return sell_price
 
 # ============================================================================
 # HELPER FUNCTIONS
