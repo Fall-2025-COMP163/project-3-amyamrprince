@@ -17,6 +17,7 @@ import quest_handler
 import combat_system
 import game_data
 from custom_exceptions import *
+import random
 
 # ============================================================================
 # GAME STATE
@@ -354,14 +355,38 @@ def explore():
     # Start combat with combat_system.SimpleBattle
     # Handle combat results (XP, gold, death)
     # Handle exceptions
+    
     print("\n=== Exploring the world... ===")
-    enemy = None
-    if enemy is None:
-        print("There is no enemies availabe to fight.")
+
+    # Load enemies from game_data
+    enemies = game_data.load_enemies()
+
+    if not enemies:
+        print("There are no enemies available to fight.")
         return
-    #print(f"You encounter a {enemy}["name"]")
-    #not finished 
-    pass
+
+    # Pick a random enemy
+    enemy_id, enemy_info = random.choice(list(enemies.items()))
+    enemy = enemy_info.copy()  # so battle modifications don't affect original
+    enemy["id"] = enemy_id
+
+    print(f"You encounter a {enemy['name']}!")
+
+    try:
+        # Start combat
+        result = combat_system.SimpleBattle(current_character, enemy)
+
+        if result["winner"] == "player":
+            print(f"You defeated the {enemy['name']}!")
+            print(f"You gained {result['xp_gained']} XP and {result['gold_gained']} gold!")
+        else:
+            print(f"You were defeated by the {enemy['name']}...")
+
+    except CharacterDeadError:
+        print("You are too injured to fight. You should heal before exploring again.")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+
 
 def shop():
     """Shop menu for buying/selling items"""
