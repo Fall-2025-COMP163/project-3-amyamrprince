@@ -371,16 +371,28 @@ def purchase_item(character, item_id, item_data):
     # Check if inventory has space
     # Subtract gold from character
     # Add item to inventory
-    item_info = item_data[item_id]
+
+    
+    if isinstance(item_data, dict) and item_id in item_data:
+        item_info = item_data[item_id]
+    else:#item_data itself is the info
+        item_info = item_data
+
     cost = item_info["cost"]
-    if character["gold"] < cost:
-        raise InsufficientResourcesError
-    if get_inventory_space_remaining(character)<= 0:
-        raise InventoryFullError
-    else:
-        character["gold"] -= cost
-        add_item_to_inventory(character, item_id)
-    return True 
+     # Check if character has enough gold
+    if character.get("gold", 0) < cost:
+        raise InsufficientResourcesError("Not enough gold to purchase item.")
+    
+    # Check if inventory has space
+    if get_inventory_space_remaining(character) <= 0:
+        raise InventoryFullError("No space left in inventory.")
+    
+    # Subtract gold and add item
+    character["gold"] -= cost
+    add_item_to_inventory(character, item_id)
+
+    return True
+
 
 def sell_item(character, item_id, item_data):
     """
