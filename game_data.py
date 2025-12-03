@@ -4,7 +4,8 @@ Game Data Module - Starter Code
 
 Name: Amya Ratcliff Prince
 
-AI Usage: [Document any AI assistance used]
+AI Usage: helped with debugging and explanations.
+
 
 This module handles loading and validating game data from text files.
 """
@@ -47,7 +48,7 @@ def load_quests(filename="data/quests.txt"):
 
     quests = {}
 
-    # Try to read the file at all → corrupted file errors go here
+    # read file corrupted file errors go here
     try:
         with open(filename, "r", encoding="utf-8") as f:
             lines = f.readlines()
@@ -55,7 +56,7 @@ def load_quests(filename="data/quests.txt"):
         raise CorruptedDataError(f"Could not read quest file: {e}")
     current_quest = {}
     try:
-        # Add a blank line at the end to flush the last quest
+        # Add a blank line at the end to empty the last quest
         for raw_line in lines + ["\n"]:
             line = raw_line.strip()
 
@@ -103,7 +104,7 @@ def load_quests(filename="data/quests.txt"):
                     current_quest = {}
                 continue
 
-            # Non-blank line: must be KEY: value
+            # Non-blank line - must be KEY: value
             if ":" not in line:
                 raise InvalidDataFormatError(f"Invalid line in quest file: '{line}'")
 
@@ -117,10 +118,9 @@ def load_quests(filename="data/quests.txt"):
             current_quest[key] = value
 
     except InvalidDataFormatError:
-        # just re-raise that as-is
         raise
     except Exception as e:
-        # anything unexpected while parsing → treat as corrupted
+        # anything unexpected while parsing is corrupted
         raise CorruptedDataError(f"Error parsing quest data: {e}")
 
     return quests
@@ -145,9 +145,9 @@ def load_items(filename="data/items.txt"):
     if not os.path.exists(filename):
         raise MissingDataFileError(f"Item file not found: {filename}")
 
-    # Try to read file at all - corrupted file if this fails
+    # Try t0 read file at all - corrupted file if this fails
     try:
-        with open(filename, "r", encoding="utf-8") as f:
+        with open(filename, "r") as f:
             lines = f.readlines()
     except (OSError, UnicodeDecodeError) as e:
         raise CorruptedDataError(f"Could not read item file: {e}")
@@ -156,7 +156,7 @@ def load_items(filename="data/items.txt"):
     current_block = []
 
     try:
-        # Add a blank line at the end to flush the last block
+        # Add an empty line so the last item doesn’t get skipped
         for raw_line in lines + ["\n"]:
             line = raw_line.strip()
 
@@ -188,7 +188,7 @@ def load_items(filename="data/items.txt"):
         # Re-raise as-is if parse_item_block complained
         raise
     except Exception as e:
-        # Anything unexpected while parsing → corrupted data
+        # Anything unexpected while parsing is corrupted data
         raise CorruptedDataError(f"Error parsing item data: {e}")
 
     return items
@@ -416,7 +416,7 @@ def parse_item_block(lines):
     for raw_line in lines:
         line = raw_line.strip()
 
-        # ignore blank lines
+        # ignores blank lines
         if line == "":
             continue
 

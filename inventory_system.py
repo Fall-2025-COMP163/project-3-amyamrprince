@@ -4,7 +4,8 @@ Inventory System Module - Starter Code
 
 Name: Amya Ratcliff Prince
 
-AI Usage: [Document any AI assistance used]
+AI Usage: helped correct explain item-data matching and debug inventory functions.
+
 
 This module handles inventory management, item usage, and equipment.
 """
@@ -14,8 +15,7 @@ from custom_exceptions import (
     ItemNotFoundError,
     InsufficientResourcesError,
     InvalidItemTypeError
-)
-import character_manager 
+) 
 # Maximum inventory size
 MAX_INVENTORY_SIZE = 20
 

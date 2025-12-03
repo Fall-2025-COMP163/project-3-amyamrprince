@@ -4,7 +4,7 @@ Main Game Module - Starter Code
 
 Name: Amya Ratcliff Prince
 
-AI Usage: [Document any AI assistance used]
+AI Usage: helped with debugging and explanations.
 
 This is the main game file that ties all modules together.
 Demonstrates module integration and complete game flow.
@@ -17,7 +17,7 @@ import quest_handler
 import combat_system
 import game_data
 from custom_exceptions import *
-import random
+import random #added for random aspects of the code
 
 # ============================================================================
 # GAME STATE
@@ -598,10 +598,10 @@ def main():
         
         if choice == 1:
             new_game()
-            return#remove later once other stuff is completed 
+            return# did this to stop this menu from popping up when choice is made 
         elif choice == 2:
             load_game()
-            return#remove later once other stuff is completed 
+            return # did this to stop this menu from popping up when choice is made 
         elif choice == 3:
             print("\nThanks for playing Quest Chronicles!")
             break

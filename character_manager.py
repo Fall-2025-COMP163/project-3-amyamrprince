@@ -4,7 +4,7 @@ Character Manager Module - Starter Code
 
 Name: [Amya Ratcliff Prince]
 
-AI Usage: [Document any AI assistance used]
+AI Usage: helped with correcting key mismatches and debugging character_manager errors.
 
 This module handles character creation, loading, and saving.
 """
@@ -126,7 +126,7 @@ def save_character(character, save_directory="data/save_games"):
 
     filename = f"{character['name']}_save.txt"
     filepath = os.path.join(save_directory, filename)
-#conver the list into a string
+#converts the list into a string
     inventory_str = ",".join(character.get("inventory",[]))
     active_str = ",".join(character.get("active_quests",[]))
     completed_str = ",".join(character.get("completed_quests",[]))

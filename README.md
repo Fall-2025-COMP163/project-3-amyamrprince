@@ -1,3 +1,106 @@
+MODULE Architecture
+## main.py:
+    -Controls the overall game loop, menus, character selection, exploring, and shop interactions.
+
+## character_manger.py:
+    -Handles character creation, leveling, stats, gold, and initialization of inventory and quest lists.
+
+## inventory_system.py:
+    -Manages adding/removing items, checking inventory space, equipping/unequipping armor & weapons, and using consumables.
+    -Also implements purchase_item() and sell_item() for shop interactions
+## combat_system.py:
+    -Contains the SimpleBattle class which handles turn-based combat between a character and an enemy, determining winners, XP, and gold rewards.
+
+## quest_handler.py
+    -Handles accepting and completing quests, including level checks, prerequisites, and status tracking (active/completed quests).
+
+## game_data.py
+   -Loads item, quest, and enemy data from files. Also creates default data files if missing and validates data formatting.
+
+## custom_exceptions.py
+    -Defines all custom exception classes used across the game (InventoryFullError, ItemNotFoundError, QuestRequirementsNotMetError, etc.)
+
+EXCEPTION STRATEGY
+## ItemNotFoundError
+Raised when trying to use/sell/equip an item the character does not actually have.
+
+## InvalidItemTypeError
+Raised when attempting to use or equip an item with the wrong type (e.g., using a weapon like a consumable).
+
+## InventoryFullError
+Raised when attempting to add an item but the inventory has no space.
+
+## InsufficientResourcesError / ValueError
+Raised when the character doesn't have enough gold to purchase an item.
+
+## QuestRequirementsNotMetError
+Raised when accepting a quest without meeting prerequisites or level requirements.
+
+## CharacterDeadError
+Raised when trying to start a battle with a character at 0 HP.
+
+These exception errors made easier to debug and figure out where the errors are coming from. 
+
+## Design Choices 
+Here are some decisions I made in my design:
+
+## Separated systems into modules
+-Keeps logic organized and allows easier testing of small parts (inventory, combat, quests, etc.).
+
+## Item data flexibility
+-I designed inventory functions (like use_item, purchase_item, and sell_item) to work with BOTH:
+
+full item_data dictionaries, and
+
+single-item dictionaries used in automated tests.
+This improves compatibility and avoids KeyErrors.
+
+## Use of helper functions
+-Functions like has_item, parse_item_effect, apply_stat_effect, and unequip_weapon/armor help keep repeated logic consistent and clean.
+
+## Stat modifications through effects
+-Weapons, armor, and consumables all use a shared effect format ("stat:value"), which makes items easy to expand later.
+
+## Default data file creation
+-My game automatically creates data/items.txt and data/quests.txt on first run, making the project more user-friendly and self-contained.
+
+## AI Usage Disclosure
+I used AI (ChatGPT) for:
+
+-Debugging error messages and understanding failed tests
+
+-Getting guidance on structuring functions like use_item, purchase_item, and sell_item
+
+-Improving logic for handling different item_data formats
+
+-Writing cleaner explanations and comments
+
+-Designing README structure
+
+## How to Play
+1. run main.py
+2. from main menue you can 
+    -Create a new character
+
+    -Load an existing character
+
+    -View stats
+
+    -Explore (fight enemies and earn XP/gold)
+
+    -Visit the shop (buy/sell items)
+
+    -View or accept quests
+
+    -Save and exit
+
+3. Combat is turn-based. Characters gain XP and gold after victories.
+4. Use items, equip weapons/armor, and manage inventory to get stronger.
+5. Quests may require certain levels or prerequisite quests.
+Enjoy your adventure!
+
+
+
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/wnCpjX4n)
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=21677273&assignment_repo_type=AssignmentRepo)
 # COMP 163: Project 3 - Quest Chronicles
@@ -132,6 +235,8 @@ Document your project with:
 3. **Design Choices:** Justify major decisions
 4. **AI Usage:** Detail what AI assistance you used
 5. **How to Play:** Instructions for running the game
+
+
 
 ### What to Submit:
 

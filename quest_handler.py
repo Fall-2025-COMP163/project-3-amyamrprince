@@ -4,7 +4,7 @@ Quest Handler Module - Starter Code
 
 Name: Amya Ratcliff Prince
 
-AI Usage: [Document any AI assistance used]
+AI Usage: helped with debugging and explanations.
 
 This module handles quest management, dependencies, and completion.
 """
@@ -16,7 +16,7 @@ from custom_exceptions import (
     QuestNotActiveError,
     InsufficientLevelError
 )
-from character_manager import gain_experience, add_gold
+from character_manager import gain_experience, add_gold # needed to import because it was not working without
 
 # ============================================================================
 # QUEST MANAGEMENT
@@ -229,7 +229,7 @@ def can_accept_quest(character, quest_id, quest_data_dict):
     Does NOT raise exceptions - just returns boolean
     """
     # TODO: Implement requirement checking
-    # Check all requirements without raising exceptions
+    # Checks all requirements without raising exceptions
     if quest_id not in quest_data_dict:
         return False
     
@@ -240,11 +240,11 @@ def can_accept_quest(character, quest_id, quest_data_dict):
     # Can't already be active
     if is_quest_active(character, quest_id):
         return False
-    # Check level requirement
+    # Checks level requirement
     required_level = quest.get("required_level", 1)
     if character.get("level", 1) < required_level:
         return False
-    # Check prerequisite quest (if any)
+    # Checks prerequisite quest (if any)
     prereq_id = quest.get("prerequisite", "NONE")
     if prereq_id != "NONE" and not is_quest_completed(character, prereq_id):
         return False
