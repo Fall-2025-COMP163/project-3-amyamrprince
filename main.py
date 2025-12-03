@@ -398,6 +398,90 @@ def shop():
     # Options: Buy item, Sell item, Back
     # Handle exceptions from inventory_system
 
+    if current_character is None:
+        print("No character loaded. Create or load a character first.")
+        return
+    while True:
+        print("\n=== Shop Menu ===")
+        print(f"Your Gold: {current_character.get('gold', 0)}")
+    # Show available items for purchase
+        print("\nAvailable Items:")
+        item_list = list(all_items.items())
+        if not item_list:
+            print("  (No items available in the shop.)")
+        else:
+            for index, (item_id, item) in enumerate(item_list, 1):
+                name = item.get("name", item_id)
+                item_type = item.get("type", "unknown")
+                cost = item.get("cost", 0)
+                print(f"  {index}. {name} ({item_type}) - {cost} gold") 
+
+        print("\nOptions:")
+        print("1) Buy item")
+        print("2) Sell item")
+        print("3) Back")         
+        choice = input("Pick a number for your choice: ").strip()
+        # Back to main menu
+        if choice == "3":
+            print("You leave the shop.")
+            break
+
+        # Buy item
+        elif choice == "1":
+            if not item_list:
+                print("The shop has no items to buy.")
+                continue
+
+            item_number = input("Enter the item number you want to buy: ").strip()
+            if not item_number.isdigit():
+                print("Please enter a valid number.")
+                continue
+
+            item_number = int(item_number)
+            if not (1 <= item_number <= len(item_list)):
+                print("Invalid item number.")
+                continue
+
+            item_id, item_info = item_list[item_number - 1]
+            cost = item_info.get("cost", 0)
+            current_gold = current_character.get("gold", 0)
+
+            if current_gold < cost:
+                print("You don't have enough gold to buy that.")
+                continue
+
+            try:
+                inventory_system.add_item_to_inventory(current_character, item_id)
+            except InventoryFullError as e:
+                # Handle exceptions from inventory_system
+                print(f"Could not buy item: {e}")
+            except Exception as e:
+                print(f"Unexpected error while buying item: {e}")
+            else:
+                current_character["gold"] = current_gold - cost
+                print(f"You bought {item_info.get('name', item_id)} for {cost} gold.")
+
+        # Sell item
+        elif choice == "2":
+            item_id = input("Enter the item_id of the item you want to sell: ").strip()
+
+            try:
+                inventory_system.remove_item_from_inventory(current_character, item_id)
+            except ItemNotFoundError as e:
+                # Handle exceptions from inventory_system
+                print(f"Could not sell item: {e}")
+                continue
+            except Exception as e:
+                print(f"Unexpected error while selling item: {e}")
+                continue
+            else:
+                sell_price = all_items.get(item_id, {}).get("cost", 0) // 2
+                current_character["gold"] = current_character.get("gold", 0) + sell_price
+                print(f"You sold {item_id} for {sell_price} gold.")
+
+        else:
+            print("Invalid choice. Please select 1, 2, or 3.")
+
     
 
     pass
