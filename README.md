@@ -65,7 +65,7 @@ This improves compatibility and avoids KeyErrors.
 -My game automatically creates data/items.txt and data/quests.txt on first run, making the project more user-friendly and self-contained.
 
 ## AI Usage Disclosure
-I used AI (ChatGPT) for:
+I used AI for:
 
 -Debugging error messages and understanding failed tests
 
