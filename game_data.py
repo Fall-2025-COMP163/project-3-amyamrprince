@@ -50,7 +50,7 @@ def load_quests(filename="data/quests.txt"):
 
     # read file corrupted file errors go here
     try:
-        with open(filename, "r", encoding="utf-8") as f:
+        with open(filename, "r") as f:
             lines = f.readlines()
     except (OSError, UnicodeDecodeError) as e:
         raise CorruptedDataError(f"Could not read quest file: {e}")

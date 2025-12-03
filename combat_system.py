@@ -303,7 +303,7 @@ class SimpleBattle:
 # SPECIAL ABILITIES
 # ============================================================================
 
-def use_special_ability(character, enemy):
+def use_special_ability(character, enemy): #use abilityoncooldownerror
     """
     Use character's class-specific special ability
     
